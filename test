@@ -1,0 +1,33 @@
+<?php
+
+require_once("twitteroauth/twitteroauth.php");
+
+$consumerKey = "u0K2ogZVGupXZdrNvloIYEPFp";
+$consumerSecret = "kWWTX2ouJfFZAVHLbv5Uudv9KXlYq1tNJPsLZD3prjDsU5BIBv";
+$accessToken = "46138894-m7VOmMZRgGjGjT3mRmgjaIY210lOzEvWfWBPgpJEu";
+$accessTokenSecret = "VOqobrxk3XRMgJ6wKteRl5WhIeu4mn8dEBO0Bqh3vGRda";
+
+$twObj = new TwitterOAuth($consumerKey,$consumerSecret,$accessToken,$accesstokenSecret);
+
+$req = $twObj->OAuthRequest('https://api.twitter.com/1.1/search/tweets.json','GET',
+    array(
+        'lang' => 'ja',
+        'q' => '%23wordpress'
+    ));
+$tweets = json_decode($req);
+ 
+if (isset($tweets) && empty($tweets->errors)) {
+    $tweets = $tweets->statuses;
+    echo '<dl>';
+    foreach ($tweets as $val) {
+        echo '<dt>' .
+            date('Y-m-d H:i:s', strtotime($val->created_at)) .
+            ' [' . $val->user->name . ']' .
+            '</dt>';
+        echo '<dd>' . $val->text . '</dt>';
+    }
+    echo '</dl>';
+} else {
+    echo 'つぶやきはありません。';
+}
+?>
